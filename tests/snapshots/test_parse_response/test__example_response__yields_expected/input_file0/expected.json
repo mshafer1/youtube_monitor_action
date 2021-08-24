@@ -1,0 +1,108 @@
+{
+    "feed": {
+        "@xmlns:yt": "http://www.youtube.com/xml/schemas/2015",
+        "@xmlns:media": "http://search.yahoo.com/mrss/",
+        "@xmlns": "http://www.w3.org/2005/Atom",
+        "link": [
+            {
+                "@rel": "self",
+                "@href": "http://www.youtube.com/feeds/videos.xml?channel_id=UCea_GJg5QGvycBOrYjjkMJg"
+            },
+            {
+                "@rel": "alternate",
+                "@href": "https://www.youtube.com/channel/UCea_GJg5QGvycBOrYjjkMJg"
+            }
+        ],
+        "id": "yt:channel:UCea_GJg5QGvycBOrYjjkMJg",
+        "yt:channelId": "UCea_GJg5QGvycBOrYjjkMJg",
+        "title": "Northwest church of Christ",
+        "author": {
+            "name": "Northwest church of Christ",
+            "uri": "https://www.youtube.com/channel/UCea_GJg5QGvycBOrYjjkMJg"
+        },
+        "published": "2018-09-16T19:45:31+00:00",
+        "entry": [
+            {
+                "id": "yt:video:rqVEyzKdxII",
+                "yt:videoId": "rqVEyzKdxII",
+                "yt:channelId": "UCea_GJg5QGvycBOrYjjkMJg",
+                "title": "The Great Folly Of The Fool",
+                "link": {
+                    "@rel": "alternate",
+                    "@href": "https://www.youtube.com/watch?v=rqVEyzKdxII"
+                },
+                "author": "...",
+                "published": "2021-08-22T18:21:22+00:00",
+                "updated": "2021-08-22T19:04:26+00:00",
+                "media:group": {
+                    "media:title": "The Great Folly Of The Fool",
+                    "media:content": {
+                        "@url": "https://www.youtube.com/v/rqVEyzKdxII?version=3",
+                        "@type": "application/x-shockwave-flash",
+                        "@width": "640",
+                        "@height": "390"
+                    },
+                    "media:thumbnail": {
+                        "@url": "https://i3.ytimg.com/vi/rqVEyzKdxII/hqdefault.jpg",
+                        "@width": "480",
+                        "@height": "360"
+                    },
+                    "media:description": "Title: The Great Folly Of The Fool Speaker: Danny Simmons We would love to hear from you and hope that you\u00e2\u20ac\u2122ll let us know if there\u00e2\u20ac\u2122s anything we can do to help you spiritually. https://www.nwchurchofchrist.org/contact/virtual-visitor-card",
+                    "media:community": {
+                        "media:starRating": {
+                            "@count": "0",
+                            "@average": "0.00",
+                            "@min": "1",
+                            "@max": "5"
+                        },
+                        "media:statistics": {
+                            "@views": "5"
+                        }
+                    }
+                }
+            },
+            {
+                "id": "yt:video:JGdOXK35umk",
+                "yt:videoId": "JGdOXK35umk",
+                "yt:channelId": "UCea_GJg5QGvycBOrYjjkMJg",
+                "title": "Our Words Matter To God",
+                "link": {
+                    "@rel": "alternate",
+                    "@href": "https://www.youtube.com/watch?v=JGdOXK35umk"
+                },
+                "author": {
+                    "name": "Northwest church of Christ",
+                    "uri": "https://www.youtube.com/channel/UCea_GJg5QGvycBOrYjjkMJg"
+                },
+                "published": "2021-08-22T18:11:01+00:00",
+                "updated": "2021-08-22T22:59:25+00:00",
+                "media:group": {
+                    "media:title": "Our Words Matter To God",
+                    "media:content": {
+                        "@url": "https://www.youtube.com/v/JGdOXK35umk?version=3",
+                        "@type": "application/x-shockwave-flash",
+                        "@width": "640",
+                        "@height": "390"
+                    },
+                    "media:thumbnail": {
+                        "@url": "https://i3.ytimg.com/vi/JGdOXK35umk/hqdefault.jpg",
+                        "@width": "480",
+                        "@height": "360"
+                    },
+                    "media:description": "Title: Our Words Matter To God Speaker: Danny Simmons We would love to hear from you and hope that you\u00e2\u20ac\u2122ll let us know if there\u00e2\u20ac\u2122s anything we can do to help you spiritually. https://www.nwchurchofchrist.org/contact/virtual-visitor-card",
+                    "media:community": {
+                        "media:starRating": {
+                            "@count": "0",
+                            "@average": "0.00",
+                            "@min": "1",
+                            "@max": "5"
+                        },
+                        "media:statistics": {
+                            "@views": "12"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}
