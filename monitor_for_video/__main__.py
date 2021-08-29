@@ -134,7 +134,7 @@ def _get_video_ids_for_channel(channel):
 
 
 def _main(options: _Options):
-    logging.basicConfig(format="%(asctime)s  (%(levelname)s)  %(filename)s.%(funcName)s -- %(message)s", level=options.verbosity)
+    logging.basicConfig(format="%(asctime)s  (%(levelname)s)  %(filename)s.%(funcName)s:%(message)s", level=options.verbosity)
 
     config = _load_config()
     channel = options.channel or config.get("channel")
@@ -159,6 +159,7 @@ def _main(options: _Options):
     if options.hibernate:
         os.system("shutdown /h")  # assumes windows
 
+    _MODULE_LOGGER.warning("Exiting")
 
 if __name__ == "__main__":
     main()
