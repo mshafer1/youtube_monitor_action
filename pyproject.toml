@@ -23,3 +23,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules"
+
+[tool.poetry.scripts]
+wait-for-videos = "monitor_for_video.__main__:main"
