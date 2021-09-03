@@ -148,8 +148,11 @@ def _main(options: _Options):
     current_videos = _get_video_ids_for_channel(channel)
     original_videos = current_videos
 
+    _MODULE_LOGGER.warning("Waiting for %s new video%s", options.n, "s" if options.n > 1 else "")
+
     while True:
         new_videos = current_videos - original_videos
+        _MODULE_LOGGER.warning("Found %s new video%s", len(new_videos), "s" if len(new_videos) != 1 else "")
         if len(new_videos) >= options.n:
             break
 
