@@ -171,6 +171,9 @@ def _main(options: _Options):
     config = _load_config()
     channel = options.channel or config.get("channel")
     delay_between_checks = config.get("check_delay", 60 * 10)  # 60 s/min * 10 min
+    if delay_between_checks < 5 * 60: # 5 min * 60s/min
+        _MODULE_LOGGER.warning("Minimum allowed delay time is 5 minutes")
+        delay_between_checks = (5 * 60)
 
     if options.store_config:
         config = {
