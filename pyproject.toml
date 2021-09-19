@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "monitor_for_video"
+name = "youtube_monitor_action"
 version = "0.1.0"
 description = "Monitor for new video on YouTube Channel"
 authors = ["mshafer1"]
@@ -25,4 +25,4 @@ build-backend = "poetry.core.masonry.api"
 addopts = "--doctest-modules"
 
 [tool.poetry.scripts]
-wait-for-videos = "monitor_for_video.__main__:main"
+wait-for-videos = "youtube_monitor_action.__main__:main"
