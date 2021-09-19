@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 import sys
+import textwrap
 import time
 import typing
 import pathlib
@@ -13,12 +14,14 @@ import xmltodict
 _MODULE_LOGGER = logging.getLogger(__name__)
 CWD = pathlib.Path()
 MODULE_DIR = pathlib.Path(__file__).parent
-CONFIG_FILE = MODULE_DIR / "config.yaml"
+USER_DIR = pathlib.Path(os.path.expanduser("~"))  # OS agnostic way of getting user home
+CONFIG_FILE = USER_DIR / ".config" / "youtube_monitor_action" / "config.yaml"
 
 
 class _Options(typing.NamedTuple):
     n: int
     channel: str
+    store_config: bool
 
     hibernate: bool
     verbosity: int
@@ -52,6 +55,11 @@ def _parse_args(argv):
         "--channel",
         type=str,
         help="(Optional) The channel id to monitor (default: load from config.yaml)",
+    )
+    parser.add_argument(
+        "--store-config",
+        action="store_true",
+        help="Store channel in config and exit",
     )
 
     actions_group = parser.add_argument_group("Actions")
@@ -133,12 +141,49 @@ def _get_video_ids_for_channel(channel):
     return set(_get_video_ids(data))
 
 
+def _setup_default_config():
+    CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+    if CONFIG_FILE.is_file():
+        _MODULE_LOGGER.info("Config file already exists, skipping")
+        return
+
+    CONFIG_FILE.write_text(
+        textwrap.dedent(
+            """\
+        ---
+        check_delay: 600  # 10 min * 60 s/min 
+        """
+        )
+    )
+
+
 def _main(options: _Options):
-    logging.basicConfig(format="%(asctime)s  (%(levelname)s)  %(filename)s.%(funcName)s:%(message)s", level=options.verbosity)
+    logging.basicConfig(
+        format="%(asctime)s  (%(levelname)s)  %(filename)s.%(funcName)s:%(message)s",
+        level=options.verbosity,
+    )
+
+    if not CONFIG_FILE.is_file():
+        print(f"Setting up default configuration in {CONFIG_FILE}")
+        _setup_default_config()
 
     config = _load_config()
     channel = options.channel or config.get("channel")
     delay_between_checks = config.get("check_delay", 60 * 10)  # 60 s/min * 10 min
+
+    if options.store_config:
+        config = {
+            "channel": channel,
+            "check_delay": delay_between_checks,
+        }
+        _MODULE_LOGGER.debug("Writing config to file (%s):\n%s", CONFIG_FILE, config)
+        with CONFIG_FILE.open("w") as config_fout:
+            print("---", file=config_fout)
+            yaml.safe_dump(config, config_fout)
+        _MODULE_LOGGER.debug("Exiting")
+        return 0
+
     logging.info("Pulling info for channel: %s", channel)
     if not channel:
         raise Exception(
