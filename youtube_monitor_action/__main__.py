@@ -82,7 +82,7 @@ def _parse_args(argv):
     parser.add_argument(
         "--store-config",
         action="store_true",
-        help="Store channel in config and exit",
+        help="Store channel and other settings in config and exit",
     )
 
     actions_group = parser.add_argument_group("Actions")
@@ -193,15 +193,6 @@ def _setup_default_config():
 def _main(options: _Options):
     _setup_logger(options.verbosity, options.log_file or (LOGGING_DIR / "log.txt"))
 
-    if options.log_file:
-        file_handler = logging.handlers.RotatingFileHandler(
-            str(options.log_file),
-            maxBytes=int(5e3),  # 5kB
-            encoding="UTF-8",
-            backupCount=0,
-        )
-        _MODULE_LOGGER.addHandler(file_handler)
-
     if not CONFIG_FILE.is_file():
         print(f"Setting up default configuration in {CONFIG_FILE}")
         _setup_default_config()
@@ -218,7 +209,7 @@ def _main(options: _Options):
             "channel": channel,
             "check_delay": delay_between_checks,
         }
-        _MODULE_LOGGER.debug("Writing config to file (%s):\n%s", CONFIG_FILE, config)
+        _MODULE_LOGGER.info("Writing config to file (%s):\n%s", CONFIG_FILE, config)
         with CONFIG_FILE.open("w") as config_fout:
             print("---", file=config_fout)
             yaml.safe_dump(config, config_fout)
@@ -234,23 +225,29 @@ def _main(options: _Options):
     current_videos = _get_video_ids_for_channel(channel)
     original_videos = current_videos
 
-    _MODULE_LOGGER.warning(
+    _MODULE_LOGGER.info(
         "Waiting for %s new video%s", options.n, "s" if options.n > 1 else ""
     )
 
     while True:
         new_videos = current_videos - original_videos
-        _MODULE_LOGGER.warning(
+        _MODULE_LOGGER.info(
             "Found %s new video%s", len(new_videos), "s" if len(new_videos) != 1 else ""
         )
         if len(new_videos) >= options.n:
             break
 
+        _MODULE_LOGGER.debug("Waiting...")
         time.sleep(delay_between_checks)  # don't need to constantly ping
+        _MODULE_LOGGER.debug("Checking")
         current_videos = _get_video_ids_for_channel(channel)
 
     if options.hibernate:
-        os.system("shutdown /h")  # assumes windows
+        _MODULE_LOGGER.info("Requesting hibernate...")
+        time.sleep(30)
+        hibernate_cmd = "shutdown /h"
+        _MODULE_LOGGER.debug(hibernate_cmd)
+        os.system(hibernate_cmd)  # assumes windows
 
     _MODULE_LOGGER.warning("Exiting")
 
