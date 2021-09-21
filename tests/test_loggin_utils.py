@@ -6,10 +6,12 @@ import youtube_monitor_action.__main__
 
 
 @pytest.fixture()
-def _setup_logger(mocker):
+def _setup_logger(mocker, tmp_path):
     logger = logging.getLogger("test_logger")
     mocker.patch.object(youtube_monitor_action.__main__, "_MODULE_LOGGER", logger)
-    youtube_monitor_action.__main__._setup_logger()
+    youtube_monitor_action.__main__._setup_logger(
+        main_logging_level=logging.INFO, log_file=tmp_path / "logs" / "log.txt"
+    )
 
     yield logger
 
@@ -18,9 +20,7 @@ def _setup_logger(mocker):
     "logging_level,file,expected",
     [
         (logging.INFO, "log.txt", True),
-        (logging.INFO, "log.debug.txt", True),
-        (logging.DEBUG, "log.debug.txt", True),
-        (logging.DEBUG, "log.txt", False),
+        (logging.DEBUG, "log.txt", True),
     ],
 )
 def test_level_puts_message_where_expected(

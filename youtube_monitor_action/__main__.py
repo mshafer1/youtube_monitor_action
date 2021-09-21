@@ -23,27 +23,19 @@ CONFIG_FILE = USER_DIR / ".config" / SCRIPT_NAME / "config.yaml"
 LOGGING_DIR = USER_DIR / ".logs" / SCRIPT_NAME
 
 
-def _setup_logger():
+def _setup_logger(main_logging_level, log_file):
     _logging_utils.config_module_logger(
         logger=_MODULE_LOGGER,
-        main_logging_level=logging.INFO,
+        main_logging_level=main_logging_level,
         file_handler_infos=[
             _logging_utils.LogFileSetup(
-                path=LOGGING_DIR / "log.txt",
-                logging_level=logging.INFO,
+                path=log_file,
+                logging_level=logging.DEBUG,
                 format=None,
                 size=5e3,
                 backups=1,
                 days=-1,
-            ),
-            _logging_utils.LogFileSetup(
-                path=LOGGING_DIR / "log.debug.txt",
-                logging_level=logging.DEBUG,
-                format=None,
-                size=10e3,
-                backups=1,
-                days=-1,
-            ),
+            )
         ],
     )
 
@@ -55,29 +47,28 @@ class _Options(typing.NamedTuple):
 
     hibernate: bool
     verbosity: int
-    file_verbosity: int
     log_file: pathlib.Path
 
 
 def _parse_args(argv):
     """
     >>> _parse_args([])
-    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=30, file_verbosity=20, log_file=None)
+    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=30, log_file=None)
 
     >>> _parse_args(['-n', '2'])
-    _Options(n=2, channel=None, store_config=False, hibernate=False, verbosity=30, file_verbosity=20, log_file=None)
+    _Options(n=2, channel=None, store_config=False, hibernate=False, verbosity=30, log_file=None)
 
     >>> _parse_args(['--channel', 'xyz'])
-    _Options(n=1, channel='xyz', store_config=False, hibernate=False, verbosity=30, file_verbosity=20, log_file=None)
+    _Options(n=1, channel='xyz', store_config=False, hibernate=False, verbosity=30, log_file=None)
 
     >>> _parse_args(["--hibernate"])
-    _Options(n=1, channel=None, store_config=False, hibernate=True, verbosity=30, file_verbosity=20, log_file=None)
+    _Options(n=1, channel=None, store_config=False, hibernate=True, verbosity=30, log_file=None)
 
     >>> _parse_args(["-v"])
-    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=20, file_verbosity=20, log_file=None)
+    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=20, log_file=None)
 
     >>> _parse_args(["-v", "-v"])
-    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=10, file_verbosity=20, log_file=None)
+    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=10, log_file=None)
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -119,23 +110,7 @@ def _parse_args(argv):
 
     logging_group = parser.add_argument_group("logging")
     logging_group.add_argument(
-        "--log-file",
-        help="File to log to",
-        type=pathlib.Path,
-    )
-    debug_group.add_argument(
-        "--log-file-verbose",
-        "--lfv",
-        help="increase verbosity (may be repeated)",
-        action="count",
-        default=0,
-    )
-    debug_group.add_argument(
-        "--log-file-quiet",
-        "--lfq",
-        help="decrease verbosity (may be repeated)",
-        action="count",
-        default=0,
+        "--log-file", help="File to log to", type=pathlib.Path, default=None
     )
 
     parsed = parser.parse_args(argv)
@@ -147,13 +122,6 @@ def _parse_args(argv):
         3: logging.INFO,
         4: logging.DEBUG,
     }
-
-    _log_file_verbosity = (
-        3 + parsed.log_file_verbose - parsed.log_file_quiet
-    )  # default to info + verbose, minus quiet
-    _log_file_verbosity = max(0, _log_file_verbosity)
-    _log_file_verbosity = min(4, _log_file_verbosity)
-    parsed.file_verbosity = _logging_levels_orders[_log_file_verbosity]
 
     _verbosity = (
         2 + parsed.verbose - parsed.quiet
@@ -223,10 +191,7 @@ def _setup_default_config():
 
 
 def _main(options: _Options):
-    logging.basicConfig(
-        format="%(asctime)s  (%(levelname)s)  %(filename)s.%(funcName)s:%(message)s",
-        level=options.verbosity,
-    )
+    _setup_logger(options.verbosity, options.log_file or (LOGGING_DIR / "log.txt"))
 
     if options.log_file:
         file_handler = logging.handlers.RotatingFileHandler(
