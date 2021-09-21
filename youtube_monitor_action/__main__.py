@@ -1,5 +1,6 @@
 import argparse
 import logging
+import logging.handlers
 import os
 import sys
 import textwrap
@@ -11,11 +12,40 @@ import yaml
 import requests
 import xmltodict
 
+from youtube_monitor_action import _logging_utils
+
 _MODULE_LOGGER = logging.getLogger(__name__)
 CWD = pathlib.Path()
 MODULE_DIR = pathlib.Path(__file__).parent
 USER_DIR = pathlib.Path(os.path.expanduser("~"))  # OS agnostic way of getting user home
-CONFIG_FILE = USER_DIR / ".config" / "youtube_monitor_action" / "config.yaml"
+SCRIPT_NAME = "youtube_monitor_action"
+CONFIG_FILE = USER_DIR / ".config" / SCRIPT_NAME / "config.yaml"
+LOGGING_DIR = USER_DIR / ".logs" / SCRIPT_NAME
+
+
+def _setup_logger():
+    _logging_utils.config_module_logger(
+        logger=_MODULE_LOGGER,
+        main_logging_level=logging.INFO,
+        file_handler_infos=[
+            _logging_utils.LogFileSetup(
+                path=LOGGING_DIR / "log.txt",
+                logging_level=logging.INFO,
+                format=None,
+                size=5e3,
+                backups=1,
+                days=-1,
+            ),
+            _logging_utils.LogFileSetup(
+                path=LOGGING_DIR / "log.debug.txt",
+                logging_level=logging.DEBUG,
+                format=None,
+                size=10e3,
+                backups=1,
+                days=-1,
+            ),
+        ],
+    )
 
 
 class _Options(typing.NamedTuple):
@@ -25,27 +55,29 @@ class _Options(typing.NamedTuple):
 
     hibernate: bool
     verbosity: int
+    file_verbosity: int
+    log_file: pathlib.Path
 
 
 def _parse_args(argv):
     """
     >>> _parse_args([])
-    _Options(n=1, channel=None, hibernate=False, verbosity=30)
+    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=30, file_verbosity=20, log_file=None)
 
     >>> _parse_args(['-n', '2'])
-    _Options(n=2, channel=None, hibernate=False, verbosity=30)
+    _Options(n=2, channel=None, store_config=False, hibernate=False, verbosity=30, file_verbosity=20, log_file=None)
 
     >>> _parse_args(['--channel', 'xyz'])
-    _Options(n=1, channel='xyz', hibernate=False, verbosity=30)
+    _Options(n=1, channel='xyz', store_config=False, hibernate=False, verbosity=30, file_verbosity=20, log_file=None)
 
     >>> _parse_args(["--hibernate"])
-    _Options(n=1, channel=None, hibernate=True, verbosity=30)
+    _Options(n=1, channel=None, store_config=False, hibernate=True, verbosity=30, file_verbosity=20, log_file=None)
 
     >>> _parse_args(["-v"])
-    _Options(n=1, channel=None, hibernate=False, verbosity=20)
+    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=20, file_verbosity=20, log_file=None)
 
     >>> _parse_args(["-v", "-v"])
-    _Options(n=1, channel=None, hibernate=False, verbosity=10)
+    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=10, file_verbosity=20, log_file=None)
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -85,18 +117,50 @@ def _parse_args(argv):
         default=0,
     )
 
+    logging_group = parser.add_argument_group("logging")
+    logging_group.add_argument(
+        "--log-file",
+        help="File to log to",
+        type=pathlib.Path,
+    )
+    debug_group.add_argument(
+        "--log-file-verbose",
+        "--lfv",
+        help="increase verbosity (may be repeated)",
+        action="count",
+        default=0,
+    )
+    debug_group.add_argument(
+        "--log-file-quiet",
+        "--lfq",
+        help="decrease verbosity (may be repeated)",
+        action="count",
+        default=0,
+    )
+
     parsed = parser.parse_args(argv)
 
-    _verbosity = 2 + parsed.verbose - parsed.quiet
-    _verbosity = max(0, _verbosity)
-    _verbosity = min(4, _verbosity)
-    parsed.verbosity = {
+    _logging_levels_orders = {
         0: logging.ERROR,
         1: logging.CRITICAL,
         2: logging.WARNING,
         3: logging.INFO,
         4: logging.DEBUG,
-    }[_verbosity]
+    }
+
+    _log_file_verbosity = (
+        3 + parsed.log_file_verbose - parsed.log_file_quiet
+    )  # default to info + verbose, minus quiet
+    _log_file_verbosity = max(0, _log_file_verbosity)
+    _log_file_verbosity = min(4, _log_file_verbosity)
+    parsed.file_verbosity = _logging_levels_orders[_log_file_verbosity]
+
+    _verbosity = (
+        2 + parsed.verbose - parsed.quiet
+    )  # default to WARN + verbose, minus quiet
+    _verbosity = max(0, _verbosity)
+    _verbosity = min(4, _verbosity)
+    parsed.verbosity = _logging_levels_orders[_verbosity]
 
     result = _Options(
         **{k: v for k, v in parsed.__dict__.items() if k in _Options._fields}
@@ -164,6 +228,15 @@ def _main(options: _Options):
         level=options.verbosity,
     )
 
+    if options.log_file:
+        file_handler = logging.handlers.RotatingFileHandler(
+            str(options.log_file),
+            maxBytes=int(5e3),  # 5kB
+            encoding="UTF-8",
+            backupCount=0,
+        )
+        _MODULE_LOGGER.addHandler(file_handler)
+
     if not CONFIG_FILE.is_file():
         print(f"Setting up default configuration in {CONFIG_FILE}")
         _setup_default_config()
@@ -171,9 +244,9 @@ def _main(options: _Options):
     config = _load_config()
     channel = options.channel or config.get("channel")
     delay_between_checks = config.get("check_delay", 60 * 10)  # 60 s/min * 10 min
-    if delay_between_checks < 5 * 60: # 5 min * 60s/min
+    if delay_between_checks < 5 * 60:  # 5 min * 60s/min
         _MODULE_LOGGER.warning("Minimum allowed delay time is 5 minutes")
-        delay_between_checks = (5 * 60)
+        delay_between_checks = 5 * 60
 
     if options.store_config:
         config = {
