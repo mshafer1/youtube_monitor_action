@@ -114,7 +114,13 @@ def _parse_args(argv):
         action="count",
         default=0,
     )
-    debug_group.add_argument("-V", dest="get_version", help="print version and exit", action="store_true")
+    debug_group.add_argument(
+        "--version",
+        "-V",
+        dest="get_version",
+        help="print version and exit",
+        action="store_true",
+    )
 
     logging_group = parser.add_argument_group("logging")
     logging_group.add_argument(
@@ -204,7 +210,6 @@ def _main(options: _Options):
     if options.get_version:
         try:
             from importlib.metadata import version
-            # from importlib.metadata import PackageNotFoundError as VError
         except ImportError:
             from importlib_metadata import version
         try:
