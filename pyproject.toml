@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "youtube_monitor_action"
-version = "0.1.0"
+version = "1.0.0"
 description = "Monitor for new video on YouTube Channel"
 authors = ["mshafer1"]
 license = "MIT"
@@ -16,7 +16,7 @@ importlib-metadata = "^4.8.1"
 pytest = "^6.2.4"
 pytest-mock = "^3.6.1"
 pytest-snapshot = "^0.6.1"
-black = "^21.7b0"
+ni-python-styleguide = "^0.1.6"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
