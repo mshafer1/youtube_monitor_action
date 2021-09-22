@@ -1,4 +1,5 @@
 import logging
+import re
 
 import pytest
 
@@ -51,13 +52,21 @@ def test_level_puts_message_where_expected(
     ],
 )
 def test_level_puts_message_in_output_when_expected(
-    logging_level, expected, capture_stderr, _setup_logger: logging.Logger
+    logging_level, expected, capture_stderr, capture_stdout, _setup_logger: logging.Logger
 ):
     _setup_logger.log(logging_level, "Bacon Ipsum")
 
     output = capture_stderr.getvalue()
+    stdout = capture_stdout.getvalue()
+
+    assert not stdout
+
     assert (
         "Bacon Ipsum" in output
     ) == expected, (
         f"Error, logging was{'' if expected else ' NOT'} expected to be in stderr"
     )
+    assert re.split(r"\s|\:", output).count("Bacon") == (
+        1 if expected else 0
+    ), f"Error, logging was{'' if expected else ' NOT'} expected exactly once"
+
