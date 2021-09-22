@@ -6,7 +6,7 @@ authors = ["mshafer1"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.6.2"
 PyYAML = "^5.4.1"
 requests = "^2.26.0"
 xmltodict = "^0.12.0"
