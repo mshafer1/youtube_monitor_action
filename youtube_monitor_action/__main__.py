@@ -57,22 +57,22 @@ class _Options(typing.NamedTuple):
 def _parse_args(argv):
     """
     >>> _parse_args([])
-    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=30, log_file=None)
+    _Options(n=1, channel=None, store_config=False, hibernate=False, open_in_browser=False, get_version=False, verbosity=30, log_file=None)
 
     >>> _parse_args(['-n', '2'])
-    _Options(n=2, channel=None, store_config=False, hibernate=False, verbosity=30, log_file=None)
+    _Options(n=2, channel=None, store_config=False, hibernate=False, open_in_browser=False, get_version=False, verbosity=30, log_file=None)
 
     >>> _parse_args(['--channel', 'xyz'])
-    _Options(n=1, channel='xyz', store_config=False, hibernate=False, verbosity=30, log_file=None)
+    _Options(n=1, channel='xyz', store_config=False, hibernate=False, open_in_browser=False, get_version=False, verbosity=30, log_file=None)
 
     >>> _parse_args(["--hibernate"])
-    _Options(n=1, channel=None, store_config=False, hibernate=True, verbosity=30, log_file=None)
+    _Options(n=1, channel=None, store_config=False, hibernate=True, open_in_browser=False, get_version=False, verbosity=30, log_file=None)
 
     >>> _parse_args(["-v"])
-    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=20, log_file=None)
+    _Options(n=1, channel=None, store_config=False, hibernate=False, open_in_browser=False, get_version=False, verbosity=20, log_file=None)
 
     >>> _parse_args(["-v", "-v"])
-    _Options(n=1, channel=None, store_config=False, hibernate=False, verbosity=10, log_file=None)
+    _Options(n=1, channel=None, store_config=False, hibernate=False, open_in_browser=False, get_version=False, verbosity=10, log_file=None)
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
