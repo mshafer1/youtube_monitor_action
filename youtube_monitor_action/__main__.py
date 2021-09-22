@@ -49,6 +49,7 @@ class _Options(typing.NamedTuple):
     hibernate: bool
     open_in_browser: bool
 
+    get_version: bool
     verbosity: int
     log_file: pathlib.Path
 
@@ -113,6 +114,7 @@ def _parse_args(argv):
         action="count",
         default=0,
     )
+    debug_group.add_argument("-V", dest="get_version", help="print version and exit", action="store_true")
 
     logging_group = parser.add_argument_group("logging")
     logging_group.add_argument(
@@ -198,6 +200,19 @@ def _setup_default_config():
 
 def _main(options: _Options):
     _setup_logger(options.verbosity, options.log_file or (LOGGING_DIR / "log.txt"))
+
+    if options.get_version:
+        try:
+            from importlib.metadata import version
+            # from importlib.metadata import PackageNotFoundError as VError
+        except ImportError:
+            from importlib_metadata import version
+        try:
+            v = version(__package__)
+        except Exception:
+            v = "unknown"
+        print(v)
+        return 0
 
     if not CONFIG_FILE.is_file():
         print(f"Setting up default configuration in {CONFIG_FILE}")
