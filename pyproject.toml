@@ -25,4 +25,4 @@ build-backend = "poetry.core.masonry.api"
 addopts = "--doctest-modules"
 
 [tool.poetry.scripts]
-wait-for-videos = "youtube_monitor_action.__main__:main"
+youtube-monitor-action = "youtube_monitor_action.__main__:main"
