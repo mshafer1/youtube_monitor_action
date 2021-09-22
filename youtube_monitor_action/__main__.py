@@ -7,6 +7,7 @@ import textwrap
 import time
 import typing
 import pathlib
+import webbrowser
 
 import yaml
 import requests
@@ -46,6 +47,8 @@ class _Options(typing.NamedTuple):
     store_config: bool
 
     hibernate: bool
+    open_in_browser: bool
+
     verbosity: int
     log_file: pathlib.Path
 
@@ -90,6 +93,9 @@ def _parse_args(argv):
         "--hibernate",
         action="store_true",
         help="Hibernate computer once condition is met",
+    )
+    actions_group.add_argument(
+        "--open-in-browser", action="store_true", help="Open new videos in browser"
     )
 
     debug_group = parser.add_argument_group("debug")
@@ -229,6 +235,8 @@ def _main(options: _Options):
         "Waiting for %s new video%s", options.n, "s" if options.n > 1 else ""
     )
 
+    new_videos = set()
+
     while True:
         new_videos = current_videos - original_videos
         _MODULE_LOGGER.info(
@@ -241,6 +249,12 @@ def _main(options: _Options):
         time.sleep(delay_between_checks)  # don't need to constantly ping
         _MODULE_LOGGER.debug("Checking")
         current_videos = _get_video_ids_for_channel(channel)
+
+    if options.open_in_browser:
+        _MODULE_LOGGER.info("Opening in browser...")
+        for id in new_videos:
+            yt_id = id.split(":")[2]
+            webbrowser.open(f"https://youtube.com/v/{yt_id}")
 
     if options.hibernate:
         _MODULE_LOGGER.info("Requesting hibernate...")
