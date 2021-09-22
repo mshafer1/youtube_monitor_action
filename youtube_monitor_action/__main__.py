@@ -156,7 +156,7 @@ def _load_config():
 
 def _get_channel_data(channel_id):
     URL = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
-    logging.info("Loading url: %s", URL)
+    _MODULE_LOGGER.info("Loading url: %s", URL)
     response = requests.get(URL)
     response.raise_for_status()
     response.raw.decode_content = True
@@ -216,7 +216,7 @@ def _main(options: _Options):
         _MODULE_LOGGER.debug("Exiting")
         return 0
 
-    logging.info("Pulling info for channel: %s", channel)
+    _MODULE_LOGGER.info("Pulling info for channel: %s", channel)
     if not channel:
         raise Exception(
             "Error, must provide either the --channel flag or set it in config.yaml"
