@@ -32,7 +32,7 @@ jobs:
           poetry version patch
       
       - name: Build Python package and publish to PyPI
-        if: ${{ github.event.release.target_commitish == 'main' && github.event_name == 'prereleased' }}
+        if: ${{ github.event.release.target_commitish == 'main' }}
         run: |
           # using testPypi for now
           poetry config repositories.testpypi https://test.pypi.org/legacy/
