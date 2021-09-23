@@ -16,24 +16,24 @@ jobs:
         poetry version patch
     
     - name: Build Python package and publish to PyPI
-        if: ${{ github.event.release.target_commitish == 'main' }}
-        run: |
-          # using testPypi for now
-          poetry config repositories.testpypi https://test.pypi.org/legacy/
-          poetry publish -r testpypi --build --username __token__ --password ${{ secrets.TEST_PYPI_TOKEN}}
+      if: ${{ github.event.release.target_commitish == 'main' }}
+      run: |
+        # using testPypi for now
+        poetry config repositories.testpypi https://test.pypi.org/legacy/
+        poetry publish -r testpypi --build --username __token__ --password ${{ secrets.TEST_PYPI_TOKEN}}
     
     - name: Bump poetry version to next alpha version
-        run: |
-          poetry version prepatch
+      run: |
+        poetry version prepatch
     
     - name: Commit files
-        if: ${{ github.event.release.target_commitish == 'main' }}
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git pull --tags -f
-          version=$(awk -F'[ ="]+' '$1 == "version" { print $2 }' pyproject.toml)
-          git commit -am "Bump package version to $version"
+      if: ${{ github.event.release.target_commitish == 'main' }}
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git pull --tags -f
+        version=$(awk -F'[ ="]+' '$1 == "version" { print $2 }' pyproject.toml)
+        git commit -am "Bump package version to $version"
     
     - name: Push changes
       if: ${{ github.event.release.target_commitish == 'main' }}
