@@ -23,9 +23,6 @@ jobs:
       - uses: Gr1N/setup-poetry@v4
         with:
           poetry-version: ${{ env.POETRY_VERSION }}
-      - name: What info is available?
-        run: |
-          echo '${{ toJSON(github) }}'
       # If the version is 0.1.0-alpha.0, this will set the version to 0.1.0
       - name: Bump package version to release
         run: |
