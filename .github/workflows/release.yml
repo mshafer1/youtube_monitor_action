@@ -36,9 +36,9 @@ jobs:
         run: |
           poetry publish --build --username __token__ --password ${{ secrets.PYPI_TOKEN}}
       
-      # - name: Bump poetry version to next alpha version
-      #   run: |
-      #     poetry version prepatch
+      - name: Bump poetry version to next alpha version
+        run: |
+          poetry version prepatch
       
       - name: Commit files
         if: ${{ github.event.release.target_commitish == 'main' }}
