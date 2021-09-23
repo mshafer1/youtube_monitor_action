@@ -3,6 +3,7 @@ name: Publish Python distribution to PyPI
 on:
   release:
     types: [released]
+  workflow_dispatch:
 
 env:
   POETRY_VERSION: 1.1.10
