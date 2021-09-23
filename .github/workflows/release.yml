@@ -48,6 +48,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git stash
+          git fetch
           git checkout -f main
           git pull -f
           git stash pop
