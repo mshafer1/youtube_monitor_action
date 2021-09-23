@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "youtube_monitor_action"
-version = "1.0.0-alpha.0"
+version = "1.0.0-alpha.2"
 description = "Monitor for new video on YouTube Channel"
 authors = ["mshafer1"]
 license = "MIT"
