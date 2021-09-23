@@ -47,7 +47,10 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git pull --tags -f main
+          git stash
+          git checkout -f main
+          git pull -f
+          git stash pop
           version=$(awk -F'[ ="]+' '$1 == "version" { print $2 }' pyproject.toml)
           git commit -am "Bump package version to $version"
       
