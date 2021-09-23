@@ -5,6 +5,10 @@ description = "Monitor for new video on YouTube Channel"
 authors = ["mshafer1"]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/mshafer1/youtube_monitor_action"
+include = [
+    "LICENSE",
+]
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
