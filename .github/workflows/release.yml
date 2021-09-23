@@ -1,5 +1,10 @@
 name: Publish Python distribution to PyPI
 on: release
+
+env:
+  POETRY_VERSION: 1.1.10
+  PYTHON_VERSION: 3.9  # Use latest
+
 jobs:
   build-n-publish:
     name: Publish Python distribution to PyPI
@@ -10,6 +15,9 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.9'
+    - uses: Gr1N/setup-poetry@v4
+        with:
+          poetry-version: ${{ env.POETRY_VERSION }} 
     # If the version is 0.1.0-alpha.0, this will set the version to 0.1.0
     - name: Bump package version to release
       run: |
