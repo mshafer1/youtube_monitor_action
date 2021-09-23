@@ -29,18 +29,16 @@ jobs:
       # If the version is 0.1.0-alpha.0, this will set the version to 0.1.0
       - name: Bump package version to release
         run: |
-          poetry version patch
+          poetry version prerelease
       
       - name: Build Python package and publish to PyPI
         if: ${{ github.event.release.target_commitish == 'main' }}
         run: |
-          # using testPypi for now
-          poetry config repositories.testpypi https://test.pypi.org/legacy/
-          poetry publish -r testpypi --build --username __token__ --password ${{ secrets.TEST_PYPI_TOKEN}}
+          poetry publish --build --username __token__ --password ${{ secrets.PYPI_TOKEN}}
       
-      - name: Bump poetry version to next alpha version
-        run: |
-          poetry version prepatch
+      # - name: Bump poetry version to next alpha version
+      #   run: |
+      #     poetry version prepatch
       
       - name: Commit files
         if: ${{ github.event.release.target_commitish == 'main' }}
