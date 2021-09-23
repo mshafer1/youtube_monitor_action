@@ -1,6 +1,15 @@
-*.yaml
+# environment settings
 .vscode/
+.python-version
+
+# virtual environments
 .venv/
 
+# config files
+*.yaml
+
+# python cache files
 *.pyc
+
+# build output
 dist/
