@@ -4,6 +4,7 @@ version = "0.9.2-alpha.0"
 description = "Monitor for new video on YouTube Channel"
 authors = ["mshafer1"]
 license = "MIT"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.6.2"
