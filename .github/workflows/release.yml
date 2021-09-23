@@ -1,8 +1,8 @@
 name: Publish Python distribution to PyPI
 
-# on:
-#   release:
-#     types: [released]
+on:
+  release:
+    types: [released]
 
 env:
   POETRY_VERSION: 1.1.10
