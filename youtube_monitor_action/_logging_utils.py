@@ -5,6 +5,8 @@ from typing import List, NamedTuple, Union
 
 
 class LogFileSetup(NamedTuple):
+    """Logging settings for file handler."""
+
     path: pathlib.Path
     logging_level: int
     format: Union[None, str]
@@ -14,17 +16,20 @@ class LogFileSetup(NamedTuple):
 
 
 MAX_LEVEL_WIDTH = len("WARNING")
-DEFAULT_LONG_FORMAT = f"%(asctime)s  %(levelname)-{MAX_LEVEL_WIDTH}s  %(filename)s.%(funcName)s : %(message)s"
+DEFAULT_LONG_FORMAT = (
+    f"%(asctime)s  %(levelname)-{MAX_LEVEL_WIDTH}s  %(filename)s.%(funcName)s : %(message)s"
+)
 
 DEFAULT_SHORT_FORMAT = f"%(asctime)s  %(levelname)-{MAX_LEVEL_WIDTH}s   %(message)s"
 
 
-def config_module_logger(
+def configure_module_logger(
     logger: logging.Logger,
     main_logging_level: int,
     main_format: str = DEFAULT_SHORT_FORMAT,
     file_handler_infos: List[LogFileSetup] = [],
 ) -> None:
+    """Configure logger handlers."""
     main_formatter = logging.Formatter(main_format)
     logger.setLevel(logging.DEBUG)  # have to be set at max
 

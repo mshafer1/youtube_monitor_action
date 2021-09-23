@@ -1,17 +1,21 @@
+"""A utility script to perform an action (or actions).
+
+when new videos are posted to a YouTube channel.
+"""
 import argparse
 import logging
 import logging.handlers
 import os
+import pathlib
 import sys
 import textwrap
 import time
 import typing
-import pathlib
 import webbrowser
 
-import yaml
 import requests
 import xmltodict
+import yaml
 
 from youtube_monitor_action import _logging_utils
 
@@ -25,7 +29,7 @@ LOGGING_DIR = USER_DIR / ".logs" / SCRIPT_NAME
 
 
 def _setup_logger(main_logging_level, log_file):
-    _logging_utils.config_module_logger(
+    _logging_utils.configure_module_logger(
         logger=_MODULE_LOGGER,
         main_logging_level=main_logging_level,
         file_handler_infos=[
@@ -55,7 +59,8 @@ class _Options(typing.NamedTuple):
 
 
 def _parse_args(argv):
-    """
+    """Parse sys args.
+
     >>> _parse_args([])
     _Options(n=1, channel=None, store_config=False, hibernate=False, open_in_browser=False, get_version=False, verbosity=30, log_file=None)
 
@@ -73,11 +78,9 @@ def _parse_args(argv):
 
     >>> _parse_args(["-v", "-v"])
     _Options(n=1, channel=None, store_config=False, hibernate=False, open_in_browser=False, get_version=False, verbosity=10, log_file=None)
-    """
+    """  # noqa W505, doctest likes long lines...
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-n", type=int, default=1, help="The number of new videos to watch for"
-    )
+    parser.add_argument("-n", type=int, default=1, help="The number of new videos to watch for")
     parser.add_argument(
         "--channel",
         type=str,
@@ -123,9 +126,7 @@ def _parse_args(argv):
     )
 
     logging_group = parser.add_argument_group("logging")
-    logging_group.add_argument(
-        "--log-file", help="File to log to", type=pathlib.Path, default=None
-    )
+    logging_group.add_argument("--log-file", help="File to log to", type=pathlib.Path, default=None)
 
     parsed = parser.parse_args(argv)
 
@@ -137,20 +138,20 @@ def _parse_args(argv):
         4: logging.DEBUG,
     }
 
-    _verbosity = (
-        2 + parsed.verbose - parsed.quiet
-    )  # default to WARN + verbose, minus quiet
+    _verbosity = 2 + parsed.verbose - parsed.quiet  # default to WARN + verbose, minus quiet
     _verbosity = max(0, _verbosity)
     _verbosity = min(4, _verbosity)
     parsed.verbosity = _logging_levels_orders[_verbosity]
 
-    result = _Options(
-        **{k: v for k, v in parsed.__dict__.items() if k in _Options._fields}
-    )
+    result = _Options(**{k: v for k, v in parsed.__dict__.items() if k in _Options._fields})
     return result
 
 
 def main(argv=None):
+    """Get everything going.
+
+    Call with --help to see options
+    """
     if argv is None:
         argv = sys.argv[1:]
 
@@ -169,9 +170,9 @@ def _load_config():
 
 
 def _get_channel_data(channel_id):
-    URL = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
-    _MODULE_LOGGER.info("Loading url: %s", URL)
-    response = requests.get(URL)
+    url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
+    _MODULE_LOGGER.info("Loading url: %s", url)
+    response = requests.get(url)
     response.raise_for_status()
     response.raw.decode_content = True
     data = xmltodict.parse(response.content)
@@ -244,16 +245,12 @@ def _main(options: _Options):
 
     _MODULE_LOGGER.info("Pulling info for channel: %s", channel)
     if not channel:
-        raise Exception(
-            "Error, must provide either the --channel flag or set it in config.yaml"
-        )
+        raise Exception("Error, must provide either the --channel flag or set it in config.yaml")
 
     current_videos = _get_video_ids_for_channel(channel)
     original_videos = current_videos
 
-    _MODULE_LOGGER.info(
-        "Waiting for %s new video%s", options.n, "s" if options.n > 1 else ""
-    )
+    _MODULE_LOGGER.info("Waiting for %s new video%s", options.n, "s" if options.n > 1 else "")
 
     new_videos = set()
 

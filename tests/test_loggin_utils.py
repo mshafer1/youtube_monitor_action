@@ -1,3 +1,4 @@
+"""Test logging utils."""
 import logging
 import re
 
@@ -27,16 +28,14 @@ def _setup_logger(mocker, tmp_path):
 def test_level_puts_message_where_expected(
     logging_level, file, expected, tmp_path, _setup_logger: logging.Logger
 ):
-    # _setup_logger.debug("test")
+    """Given a level, assert that a message shows up in the file or not."""
     _setup_logger.log(logging_level, "Bacon Ipsum")
 
     logged = (tmp_path / "logs" / file).read_text()
 
     assert (
         "Bacon Ipsum" in logged
-    ) == expected, (
-        f"Error, logging was{'' if expected else ' NOT'} expected to be in {file}"
-    )
+    ) == expected, f"Error, logging was{'' if expected else ' NOT'} expected to be in {file}"
     assert logged.split().count("Bacon") == (
         1 if expected else 0
     ), f"Error, logging was{'' if expected else ' NOT'} expected exactly once"
@@ -58,6 +57,7 @@ def test_level_puts_message_in_output_when_expected(
     capture_stdout,
     _setup_logger: logging.Logger,
 ):
+    """Given a logging level, assert that messages show on terminal when expected."""
     _setup_logger.log(logging_level, "Bacon Ipsum")
 
     output = capture_stderr.getvalue()
@@ -67,9 +67,7 @@ def test_level_puts_message_in_output_when_expected(
 
     assert (
         "Bacon Ipsum" in output
-    ) == expected, (
-        f"Error, logging was{'' if expected else ' NOT'} expected to be in stderr"
-    )
+    ) == expected, f"Error, logging was{'' if expected else ' NOT'} expected to be in stderr"
     assert re.split(r"\s|\:", output).count("Bacon") == (
         1 if expected else 0
     ), f"Error, logging was{'' if expected else ' NOT'} expected exactly once"
