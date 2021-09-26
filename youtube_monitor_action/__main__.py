@@ -138,7 +138,7 @@ def _parse_args(argv):
         4: logging.DEBUG,
     }
 
-    _verbosity = 2 + parsed.verbose - parsed.quiet  # default to WARN + verbose, minus quiet
+    _verbosity = 3 + parsed.verbose - parsed.quiet  # default to WARN + verbose, minus quiet
     _verbosity = max(0, _verbosity)
     _verbosity = min(4, _verbosity)
     parsed.verbosity = _logging_levels_orders[_verbosity]
@@ -199,10 +199,21 @@ def _setup_default_config():
         textwrap.dedent(
             """\
         ---
-        check_delay: 600  # 10 min * 60 s/min 
+        check_delay: 600  # 10 min * 60 s/min
         """
         )
     )
+
+
+def _format_seconds(secs: int):
+    result = ""
+    if secs >= 60:
+        result += f"{secs // 60} min."
+        if secs % 60:
+            result += " & "
+    if secs % 60:
+        result += f"{secs % 60} sec."
+    return result
 
 
 def _main(options: _Options):
@@ -262,7 +273,7 @@ def _main(options: _Options):
         if len(new_videos) >= options.n:
             break
 
-        _MODULE_LOGGER.debug("Waiting...")
+        _MODULE_LOGGER.info("Waiting for %s ...", _format_seconds(delay_between_checks))
         time.sleep(delay_between_checks)  # don't need to constantly ping
         _MODULE_LOGGER.debug("Checking")
         current_videos = _get_video_ids_for_channel(channel)
