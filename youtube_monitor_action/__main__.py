@@ -37,9 +37,8 @@ def _setup_logger(main_logging_level, log_file):
                 path=log_file,
                 logging_level=logging.DEBUG,
                 format=None,
-                size=5e3,
                 backups=1,
-                days=-1,
+                days=6,
             )
         ],
     )
