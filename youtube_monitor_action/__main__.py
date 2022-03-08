@@ -39,6 +39,7 @@ def _setup_logger(main_logging_level, log_file):
                 format=None,
                 backups=1,
                 days=6,
+                size=-1
             )
         ],
     )
