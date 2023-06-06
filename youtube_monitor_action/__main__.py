@@ -34,12 +34,7 @@ def _setup_logger(main_logging_level, log_file):
         main_logging_level=main_logging_level,
         file_handler_infos=[
             _logging_utils.LogFileSetup(
-                path=log_file,
-                logging_level=logging.DEBUG,
-                format=None,
-                backups=1,
-                days=6,
-                size=-1
+                path=log_file, logging_level=logging.DEBUG, format=None, backups=1, days=6, size=-1
             )
         ],
     )
@@ -100,7 +95,9 @@ def _parse_args(argv):
         help="Hibernate computer once condition is met",
     )
     actions_group.add_argument(
-        "--open-in-browser", action="store_true", help="Open new videos in browser",
+        "--open-in-browser",
+        action="store_true",
+        help="Open new videos in browser",
     )
     actions_group.add_argument(
         "--shutdown",
