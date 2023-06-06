@@ -34,7 +34,12 @@ def _setup_logger(main_logging_level, log_file):
         main_logging_level=main_logging_level,
         file_handler_infos=[
             _logging_utils.LogFileSetup(
-                path=log_file, logging_level=logging.DEBUG, format=None, backups=1, days=6, size=-1
+                path=log_file,
+                logging_level=logging.DEBUG,
+                format=None,
+                backups=1,
+                days=6,
+                size=-1,
             )
         ],
     )
