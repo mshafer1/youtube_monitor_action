@@ -39,7 +39,7 @@ def _setup_logger(main_logging_level, log_file):
                 format=None,
                 backups=1,
                 days=6,
-                size=-1
+                size=-1,
             )
         ],
     )
@@ -51,6 +51,7 @@ class _Options(typing.NamedTuple):
     store_config: bool
 
     hibernate: bool
+    shutdown: bool
     open_in_browser: bool
 
     get_version: bool
@@ -99,7 +100,14 @@ def _parse_args(argv):
         help="Hibernate computer once condition is met",
     )
     actions_group.add_argument(
-        "--open-in-browser", action="store_true", help="Open new videos in browser"
+        "--open-in-browser",
+        action="store_true",
+        help="Open new videos in browser",
+    )
+    actions_group.add_argument(
+        "--shutdown",
+        action="store_true",
+        help="Shutdown computer once condition is met",
     )
 
     debug_group = parser.add_argument_group("debug")
@@ -290,6 +298,13 @@ def _main(options: _Options):
         hibernate_cmd = "shutdown /h"
         _MODULE_LOGGER.debug(hibernate_cmd)
         os.system(hibernate_cmd)  # assumes windows
+
+    if options.shutdown:
+        _MODULE_LOGGER.info("Requesting shutdown...")
+        time.sleep(30)
+        shutdown_cmd = "shutdown -s -t 30"
+        _MODULE_LOGGER.debug(shutdown_cmd)
+        os.system(shutdown_cmd)  # assumes windows
 
     _MODULE_LOGGER.warning("Exiting")
 

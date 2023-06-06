@@ -7,7 +7,7 @@ on:
       - published # from the docs: If you want a workflow to run when stable and pre-releases publish, subscribe to *published* instead of "released" and "prereleased".
 
 env:
-  POETRY_VERSION: 1.1.10
+  POETRY_VERSION: 1.2.2
   PYTHON_VERSION: 3.9  # Use latest
 
 jobs:
