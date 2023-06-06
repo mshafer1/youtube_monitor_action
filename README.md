@@ -4,8 +4,9 @@ A utility to perform an action after videos are live on YouTube for a given chan
 This module provides the script `youtube-monitor-action`
 ```
 usage: youtube-monitor-action [-h] [-n N] [--channel CHANNEL] [--store-config]
-                              [--hibernate] [--open-in-browser] [--verbose]
-                              [--quiet] [--version] [--log-file LOG_FILE]
+                              [--hibernate] [--open-in-browser] [--shutdown]
+                              [--verbose] [--quiet] [--version]
+                              [--log-file LOG_FILE]
 
 optional arguments:
   -h, --help           show this help message and exit
@@ -17,6 +18,7 @@ optional arguments:
 Actions:
   --hibernate          Hibernate computer once condition is met
   --open-in-browser    Open new videos in browser
+  --shutdown           Shutdown computer once condition is met
 
 debug:
   --verbose, -v        increase verbosity (may be repeated)
