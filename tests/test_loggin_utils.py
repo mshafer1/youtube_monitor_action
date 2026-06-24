@@ -1,4 +1,5 @@
 """Test logging utils."""
+
 import logging
 import re
 

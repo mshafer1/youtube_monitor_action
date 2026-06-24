@@ -1,4 +1,5 @@
 """Test parsing rss response."""
+
 import json
 import pathlib
 
@@ -6,7 +7,6 @@ import pytest
 import requests
 
 import youtube_monitor_action
-
 
 CWD = pathlib.Path()
 FILE_DIR = pathlib.Path(__file__).parent

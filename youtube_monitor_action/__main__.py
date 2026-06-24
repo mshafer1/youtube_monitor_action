@@ -2,9 +2,9 @@
 
 when new videos are posted to a YouTube channel.
 """
+
 import argparse
 import logging
-import logging.handlers
 import os
 import pathlib
 import sys
