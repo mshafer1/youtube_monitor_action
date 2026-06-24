@@ -1,6 +1,7 @@
 """Setup test utils for pytest."""
+
 import io
-from contextlib import redirect_stdout, redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 
 import pytest
 
